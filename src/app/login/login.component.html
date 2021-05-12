@@ -1,0 +1,44 @@
+<div class="content">
+    <div class="card">
+        <div class="item-card">
+            <h1>Login</h1>
+            <mat-form-field>
+                <mat-label>Correo</mat-label>
+                <input matInput [(ngModel)]="txtCorreo" type="email">
+                <button mat-icon-button matSuffix (click)="txtCorreo = '';" *ngIf="txtCorreo.length > 0">
+                    <mat-icon>close</mat-icon>
+                </button>
+            </mat-form-field>
+            <mat-form-field>
+                <mat-label>Contraseña</mat-label>
+                <input matInput [(ngModel)]="txtPass" [type]="hide ? 'password' : 'text'">
+                <button mat-icon-button matSuffix (click)="hide = !hide" [attr.aria-label]="'Hide password'" [attr.aria-pressed]="hide">
+                    <mat-icon>{{hide ? 'visibility' : 'visibility_off'}}</mat-icon>
+                </button>
+            </mat-form-field><br />
+            <button mat-raised-button color="primary" (click)="acceder()" >Acceder</button>
+        </div>
+        <div class="item-card">
+          <h1>Creación de acceso</h1>
+          <form [formGroup]="formUsuario">
+            <app-custom-input [label]="'Nombres*:'"
+                              [formControlName]="'nombres'">
+            </app-custom-input>
+            <app-custom-input [label]="'Apellidos*:'"
+                              [formControlName]="'apellidos'">
+            </app-custom-input>
+            <app-custom-input [label]="'Correo*:'"
+                              [type]="'email'"
+                              [formControlName]="'correo'">
+            </app-custom-input>
+            <app-custom-input [label]="'Contraseña*:'"
+                              [type]="'password'"
+                              [formControlName]="'password'">
+            </app-custom-input>
+
+          </form>
+          <button mat-raised-button color="primary" (click)="onSubmit()" >Crear acceso</button>
+        </div>
+    </div>
+</div>
+<app-loading [isLoading]="isLoading"></app-loading>

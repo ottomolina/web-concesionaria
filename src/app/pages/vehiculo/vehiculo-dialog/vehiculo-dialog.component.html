@@ -1,0 +1,22 @@
+<div class="dialog">
+  <h1 mat-dialog-title>
+    {{title}}
+  </h1>
+  <div mat-dialog-content>
+
+    <form [formGroup]="formVehiculo">
+      <app-custom-select [label]="'Tipo:*'" [formControlName]="'tipo'" [lista]="lstTipo"></app-custom-select>
+      <app-custom-select [label]="'Marca:*'" [formControlName]="'marca'" [lista]="lstMarca" (ngModelChange)="selectMarca($event)"></app-custom-select>
+      <app-custom-select [label]="'Línea:*'" [formControlName]="'linea'" [lista]="lstLinea"></app-custom-select>
+      <app-custom-input [label]="'Año:*'" [formControlName]="'modelo'" [type]="'number'"></app-custom-input>
+      <app-custom-input [label]="'Tamaño motor (cc):*'" [formControlName]="'cc'" [type]="'number'"></app-custom-input>
+      <app-custom-input [label]="'Color:*'" [formControlName]="'color'"></app-custom-input>
+      <app-custom-input [label]="'Precio:*'" [formControlName]="'precio'" [type]="'number'"></app-custom-input>
+    </form>
+
+  </div>
+  <div mat-dialog-actions>
+    <button mat-raised-button (click)="clickGuardar()">Guardar</button>
+    <button mat-raised-button (click)="closeDialog()">Cancelar</button>
+  </div>
+</div>

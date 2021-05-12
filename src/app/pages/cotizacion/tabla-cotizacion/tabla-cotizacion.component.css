@@ -1,0 +1,19 @@
+
+table {
+  width: 100%;
+}
+
+.table-cotizaciones {
+  padding-bottom: 15px;
+}
+
+.table-cotizaciones th {
+  text-align: left;
+  padding-bottom: 10px;
+  padding-top: 10px;
+  border-bottom: 1px groove gray;
+}
+
+.table-cotizaciones td {
+  border-bottom: 1px groove gray;
+}

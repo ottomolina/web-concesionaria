@@ -1,0 +1,25 @@
+table {
+  width: 100%;
+}
+
+tr.element-row:hover {
+  background: whitesmoke;
+}
+
+tr.element-row:active {
+  background: #efefef;
+}
+
+tr.expanded-row {
+  background: whitesmoke;
+}
+
+tr.row-selected {
+  background: whitesmoke;
+}
+
+.card {
+  position: relative;
+  height: 296px;
+  overflow: auto;
+}

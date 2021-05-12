@@ -1,0 +1,19 @@
+
+<app-title-bar [title]="'Mantenimientos'" (handleAgregar)="nuevoRegistro()"></app-title-bar>
+<mat-tab-group animationDuration="0ms" [(selectedIndex)]="selectedTabIndex">
+  <mat-tab label="Tipos">
+    <ng-template matTabContent>
+      <app-tipos [lstData]="listaTipos" (editar)="clickEditar($event)" (eliminar)="clickEliminar($event)"></app-tipos>
+    </ng-template>
+  </mat-tab>
+  <mat-tab label="Marcas">
+    <ng-template matTabContent>
+      <app-marcas [lstData]="listaMarcas" (editar)="clickEditar($event)" (eliminar)="clickEliminar($event)"></app-marcas>
+    </ng-template>
+  </mat-tab>
+  <mat-tab label="Línea">
+    <ng-template matTabContent>
+      <app-linea [lstData]="listaLineas" (editar)="clickEditar($event)" (eliminar)="clickEliminar($event)"></app-linea>
+    </ng-template>
+  </mat-tab>
+</mat-tab-group>

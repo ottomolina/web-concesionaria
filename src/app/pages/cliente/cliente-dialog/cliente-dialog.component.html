@@ -1,0 +1,24 @@
+<div class="dialog">
+  <h1 mat-dialog-title>
+    {{title}}
+  </h1>
+  <div mat-dialog-content>
+
+    <form [formGroup]="formCliente">
+      <app-custom-input [label]="'Nombres:*'" [formControlName]="'nombres'"></app-custom-input>
+      <app-custom-input [label]="'Apellidos:*'" [formControlName]="'apellidos'"></app-custom-input>
+      <app-custom-input [label]="'Teléfono:*'" [formControlName]="'telefono'" [type]="'number'"></app-custom-input>
+      <app-custom-input [label]="'Correo:*'" [formControlName]="'correo'" [type]="'email'"></app-custom-input>
+      <app-custom-input [label]="'Nacimiento:*'" [formControlName]="'nacimiento'" [type]="'date'"></app-custom-input>
+      <app-custom-input [label]="'Dirección:*'" [formControlName]="'direccion'" [rows]="'3'"></app-custom-input>
+      <app-custom-select [label]="'Género:*'" [formControlName]="'genero'" [lista]="lstGenero"></app-custom-select>
+      <app-custom-input [label]="'Ocupación:*'" [formControlName]="'ocupacion'"></app-custom-input>
+      <app-custom-input [label]="'Ingresos:*'" [formControlName]="'ingresos'"></app-custom-input>
+    </form>
+
+  </div>
+  <div mat-dialog-actions>
+    <button mat-raised-button (click)="clickGuardar()">Guardar</button>
+    <button mat-raised-button (click)="closeDialog()">Cancelar</button>
+  </div>
+</div>

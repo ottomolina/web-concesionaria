@@ -1,0 +1,37 @@
+<table class="mat-table mat-elevation-z8 table-cotizaciones">
+  <tr>
+    <th>No.</th>
+    <th>Concesionario</th>
+    <th>Agente</th>
+    <th>Vehiculo</th>
+    <th>Precio</th>
+    <th>Creado</th>
+    <th></th>
+  </tr>
+  <tr *ngFor="let obj of listaCotizacion; let i = index">
+    <td>{{(i+1)}}</td>
+    <td matTooltip="{{obj.concesionario.direccion}}">{{obj.concesionario.nombre}}</td>
+    <td>{{obj.agente.nombres}} {{obj.agente.apellidos}}</td>
+    <td>{{obj.vehiculo.tipo}} {{obj.vehiculo.marca}} {{obj.linea}} {{obj.vehiculo.modelo}} {{obj.vehiculo.color}}</td>
+    <td>{{obj.vehiculo.precio}}</td>
+    <td>{{obj.creado}}</td>
+    <td>
+      <button mat-icon-button [matMenuTriggerFor]="menu" [matMenuTriggerData]="{object: obj}">
+        <mat-icon>more_vert</mat-icon>
+      </button>
+    </td>
+  </tr>
+</table>
+
+<mat-menu #menu="matMenu">
+  <ng-template matMenuContent let-object="object">
+    <button mat-menu-item (click)="clickInfo(object)">
+      <mat-icon>edit</mat-icon>
+      <span>Más información</span>
+    </button>
+    <button mat-menu-item (click)="clickPrint(object)">
+      <mat-icon>print</mat-icon>
+      <span>Imprimir</span>
+    </button>
+  </ng-template>
+</mat-menu>
