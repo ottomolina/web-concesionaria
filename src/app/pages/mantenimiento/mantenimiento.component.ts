@@ -7,6 +7,9 @@ import {ComponentType} from '@angular/cdk/overlay';
 import {MarcaDialogComponent} from './marcas/marca-dialog/marca-dialog.component';
 import {LineaDialogComponent} from './linea/linea-dialog/linea-dialog.component';
 import {ItemSelect} from '../../models/ItemSelect';
+import {TipoService} from '../../providers/mantenimiento/tipo.service';
+import {MarcaService} from '../../providers/mantenimiento/marca.service';
+import {LineaService} from '../../providers/mantenimiento/linea.service';
 
 @Component({
   selector: 'app-mantenimiento',
@@ -15,57 +18,58 @@ import {ItemSelect} from '../../models/ItemSelect';
 })
 export class MantenimientoComponent extends AppComponent {
   public selectedTabIndex = 0;
+  public listaTipos: any = [];
+  public listaMarcas: any = [];
+  public listaLineas: any = [];
 
-  public listaTipos = [
-    { id: 1, tipo: 'Camioneta' },
-    { id: 2, tipo: 'Hatchback' },
-    { id: 3, tipo: 'Sedán' },
-    { id: 4, tipo: 'Pickup' }
-  ];
-
-  public listaMarcas = [
-    { id: 1, marca: 'Audi' },
-    { id: 2, marca: 'BMW' },
-    { id: 3, marca: 'Chevrolet' },
-    { id: 4, marca: 'Honda' },
-  ];
-
-  public listaLineas = [
-    { id: 1, marca: 'Audi', linea: 'Q5' },
-    { id: 2, marca: 'Honda', linea: 'CRV' },
-    { id: 3, marca: 'Honda', linea: 'Civic' }
-  ];
-
-  private lstMarcaSelect = [];
+  private lstMarcaSelect: any = [];
 
   constructor(public alertService: NgxMatAlertConfirmService,
-              public dialog: MatDialog) {
+              public dialog: MatDialog,
+              private lineaService: LineaService,
+              private marcaService: MarcaService,
+              private tipoService: TipoService,
+  ) {
     super(alertService, dialog);
-    this.listaMarcas.forEach((element: any) => {
-      this.lstMarcaSelect.push(new ItemSelect(element.marca, element));
+    this.showLoading();
+    this.cargaDatos(3).then(() => {
+      this.dismissLoading();
+    }).catch(err => {
+      this.dismissLoading();
+      this.showMessage(err.mensaje);
     });
   }
 
-  public nuevoRegistro(): void {
-    const data: any = {orm: null, handleGuardar: this.handleGuardar};
-    if (this.selectedTabIndex === 2) {
-      data.lstMarcas = this.lstMarcaSelect;
+  private cargaDatos = async (option: number) => {
+    if (option === 0 || option === 3) {
+      this.listaTipos = await this.tipoService.listarTipos();
     }
-    console.log('Datos', data);
-    const component = this.getComponent();
-    this.openDialog(component, data, null);
+    if (option === 1 || option === 3) {
+      this.listaMarcas = await this.marcaService.listarMarcas();
+      this.lstMarcaSelect = this.listaMarcas.map(element => new ItemSelect(element.marca, element.id) );
+    }
+    if (option === 2 || option === 3) {
+      this.listaLineas = await this.lineaService.listarLineas();
+    }
   }
 
-  public clickEditar(obj): void {
-    console.log('Editar', obj);
-    const data: any = { orm: obj, handleGuardar: this.handleGuardar };
+  public abrirDialog(obj?: any): void {
+    const data: any = {orm: obj};
     if (this.selectedTabIndex === 2) {
+      // Se adjunta las marcas para seleccion en el formulario
       data.lstMarcas = this.lstMarcaSelect;
     }
     const component = this.getComponent();
-    if (component) {
-      this.openDialog(component, data, null);
-    }
+    const ref = this.openDialog(component, data, null);
+    ref.componentInstance.handleGuardar.subscribe(result => {
+      this.showLoading();
+      this.handleGuardar(result).then(resp => {
+        this.dismissLoading();
+      }).catch(err => {
+        this.dismissLoading();
+        this.showMessage(err.mensaje);
+      });
+    });
   }
 
   public clickEliminar(obj): void {
@@ -82,8 +86,24 @@ export class MantenimientoComponent extends AppComponent {
     console.log('Handle Eliminar', obj);
   }
 
-  public handleGuardar(obj): void {
-    console.log('Handle Guardar', obj);
+  public async handleGuardar(obj): Promise<any> {
+    let promise: any;
+    const { id } = obj;
+    if (this.selectedTabIndex === 0 ) { // Se guarda un registro de tipos de vehiculo
+      promise = id
+          ? await this.tipoService.actualizarTipo(obj)
+          : await this.tipoService.crearTipo(obj);
+    } else if (this.selectedTabIndex === 1 ) { // Se guarda un registro de marcas de vehiculo
+      promise = id
+          ? await this.marcaService.actualizarMarca(obj)
+          : await this.marcaService.crearMarca(obj);
+    } else if (this.selectedTabIndex === 2 ) { // Se guarda un registro de lineas de vehiculo
+      promise = id
+          ? await this.lineaService.actualizarLinea(obj)
+          : await this.lineaService.crearLinea(obj);
+    }
+    const resp = await this.cargaDatos(this.selectedTabIndex);
+    return { resp, promise };
   }
 
   private getComponent(): ComponentType<any> {

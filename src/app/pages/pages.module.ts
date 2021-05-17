@@ -10,6 +10,7 @@ import {MatButtonModule} from '@angular/material/button';
 import {MatSidenavModule} from '@angular/material/sidenav';
 import {MatListModule} from '@angular/material/list';
 import {AuthService} from '../providers/auth/auth.service';
+import {ConcesionarioService} from '../providers/concesionario/concesionario.service';
 
 
 @NgModule({
@@ -25,7 +26,8 @@ import {AuthService} from '../providers/auth/auth.service';
     MatListModule
   ],
   providers: [
-    AuthService
+    AuthService,
+    ConcesionarioService
   ]
 })
 export class PagesModule { }

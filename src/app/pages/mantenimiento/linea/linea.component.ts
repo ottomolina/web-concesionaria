@@ -10,7 +10,7 @@ export class LineaComponent implements OnInit {
   @Output() editar = new EventEmitter();
   @Output() eliminar = new EventEmitter();
 
-  displayedColumns: string[] = ['id', 'marca', 'linea', 'options'];
+  displayedColumns: string[] = ['id', 'linea', 'marca', 'options'];
 
   constructor() { }
 

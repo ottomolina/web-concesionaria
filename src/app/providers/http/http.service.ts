@@ -19,7 +19,7 @@ export class HttpService {
       const ws = `${environment.ws}${endpoint}`;
       let header = new HttpHeaders();
       // header = header.set('Content-Type', 'application/json; charset=utf-8');
-      console.log('Request enviar: ', datos);
+      // console.log('Request enviar: ', datos);
 
       const token = this.auth.getToken();
       if ( token ) {
@@ -29,7 +29,7 @@ export class HttpService {
       this.http.post(ws, datos, { headers: header }).subscribe( (data) => {
         this.validaJsonRespuesta(data, resolve, reject);
       }, (err) => {
-          console.log(err);
+          console.log('Error en servicio', err);
           if (err.status === 400) {
             const {errors} = err.error.mensaje;
             reject(new ErrorHttp(errors[0].msg)); // Solo se devolverá el primer mensaje
@@ -48,7 +48,7 @@ export class HttpService {
       const ws = `${environment.ws}${endpoint}`;
       let header = new HttpHeaders();
       header = header.set('Content-Type', 'application/json; charset=utf-8');
-      console.log('Request enviar: ', datos);
+      // console.log('Request enviar: ', datos);
 
       const token = this.auth.getToken();
       if ( token ) {
@@ -58,7 +58,7 @@ export class HttpService {
       this.http.put(ws, datos, { headers: header }).subscribe( (data) => {
         this.validaJsonRespuesta(data, resolve, reject);
       }, (err) => {
-          console.log(err);
+          console.log('Error en servicio', err);
           if (err.status === 400) {
             const { errors } = err.error.mensaje;
             reject(new ErrorHttp(errors[0].msg) ); // Solo se devolverá el primer mensaje
@@ -86,11 +86,10 @@ export class HttpService {
         });
         ws = `${ws}?${params}`;
       }
-      console.log(ws);
 
-      this.http.get(ws).subscribe( (resp) => {
+      this.http.get(ws, {headers: header}).subscribe( (resp) => {
         try{
-          console.log(resp);
+          // console.log(resp);
           const json = JSON.parse(JSON.stringify(resp));
           switch (json.codigo) {
             case this.OK:
@@ -104,11 +103,11 @@ export class HttpService {
               break;
           }
         } catch (err) {
-          console.log(err);
+          console.log('Error lectura archivo', err);
           reject(new ErrorHttp('Ocurrió un error en la lectura de la respuesta.'));
         }
       }, (err) => {
-          console.log(err);
+          console.log('Error conexion servidor', err);
           reject(new ErrorHttp('Ocurrió un problema con la conexión al servidor.'));
       });
     });
@@ -116,7 +115,7 @@ export class HttpService {
 
   private validaJsonRespuesta(data, resolve, reject): any {
     try {
-      console.log(data);
+      console.log('Datos devueltos por el servicio', data);
       const json = JSON.parse(JSON.stringify(data));
       switch (json.codigo) {
         case this.OK:
@@ -135,7 +134,7 @@ export class HttpService {
           break;
       }
     } catch (err) {
-      console.log(err);
+      console.log('Error validaJsonRespuesta', err);
       reject(new ErrorHttp('Ocurrió un error en la lectura de la respuesta.'));
     }
   }

@@ -23,10 +23,24 @@ import { ClTablaComponent } from './cotizacion-dialog/cl-tabla/cl-tabla.componen
 import { CarTablaComponent } from './cotizacion-dialog/car-tabla/car-tabla.component';
 import { ConfirmaDatosComponent } from './cotizacion-dialog/confirma-datos/confirma-datos.component';
 import {TablaDetalleModule} from '../../components/tabla-detalle/tabla-detalle.module';
+import {ClienteService} from '../../providers/cliente/cliente.service';
+import {CotizacionService} from '../../providers/cotizacion/cotizacion.service';
+import {VehiculoService} from '../../providers/vehiculo/vehiculo.service';
+import {LoadingModule} from '../../components/loading/loading.module';
+import { InfoCotizacionComponent } from './info-cotizacion/info-cotizacion.component';
+import {PdfService} from '../../providers/util/pdf.service';
 
 
 @NgModule({
-  declarations: [CotizacionComponent, TablaCotizacionComponent, CotizacionDialogComponent, ClTablaComponent, CarTablaComponent, ConfirmaDatosComponent],
+  declarations: [
+    CotizacionComponent,
+    TablaCotizacionComponent,
+    CotizacionDialogComponent,
+    ClTablaComponent,
+    CarTablaComponent,
+    ConfirmaDatosComponent,
+    InfoCotizacionComponent
+  ],
   imports: [
     CommonModule,
     CotizacionRoutingModule,
@@ -42,7 +56,14 @@ import {TablaDetalleModule} from '../../components/tabla-detalle/tabla-detalle.m
     FormsModule,
     MatPaginatorModule,
     MatDialogModule,
-    TablaDetalleModule
+    TablaDetalleModule,
+    LoadingModule
+  ],
+  providers: [
+    CotizacionService,
+    ClienteService,
+    PdfService,
+    VehiculoService
   ]
 })
 export class CotizacionModule { }

@@ -6,7 +6,7 @@
 
     <form [formGroup]="formLinea">
       <app-custom-select [label]="'Marca:*'"
-                         [formControlName]="'marca'"
+                         [formControlName]="'marcaid'"
                          [lista]="lista"></app-custom-select>
       <app-custom-input [label]="'Línea:*'"
                         [formControlName]="'linea'"></app-custom-input>
@@ -14,7 +14,7 @@
 
   </div>
   <div mat-dialog-actions>
-    <button mat-raised-button (click)="clickGuardar()">Guardar</button>
+    <button mat-raised-button (click)="clickGuardar()" [disabled]="!formLinea.valid">Guardar</button>
     <button mat-raised-button (click)="closeDialog()">Cancelar</button>
   </div>
 </div>

@@ -25,11 +25,8 @@
   background-color: blue;
   display: flex;
   flex-direction: row;
-
-  /*@media (max-width: 600px) {*/
-  /*  height: 56px;*/
-  /*}*/
 }
+
 .mat-nav-list {
   padding-top: 0;
 }

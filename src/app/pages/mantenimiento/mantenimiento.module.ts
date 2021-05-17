@@ -19,6 +19,9 @@ import {ReactiveFormsModule} from '@angular/forms';
 import {CustomInputModule} from '../../components/custom-input/custom-input.module';
 import {MatDialogModule} from '@angular/material/dialog';
 import {CustomSelectModule} from '../../components/custom-select/custom-select.module';
+import {TipoService} from '../../providers/mantenimiento/tipo.service';
+import {MarcaService} from '../../providers/mantenimiento/marca.service';
+import {LineaService} from '../../providers/mantenimiento/linea.service';
 
 
 @NgModule({
@@ -44,6 +47,11 @@ import {CustomSelectModule} from '../../components/custom-select/custom-select.m
     CustomInputModule,
     MatDialogModule,
     CustomSelectModule
+  ],
+  providers: [
+    LineaService,
+    MarcaService,
+    TipoService,
   ]
 })
 export class MantenimientoModule { }

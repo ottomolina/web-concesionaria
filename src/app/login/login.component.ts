@@ -15,8 +15,8 @@ import {MatDialog} from '@angular/material/dialog';
 })
 export class LoginComponent extends AppComponent {
   public hide = true;
-  public txtCorreo: string;
-  public txtPass: string;
+  public txtCorreo = '';
+  public txtPass = '';
 
   public formUsuario: FormGroup;
   private fb: FormBuilder;
@@ -27,8 +27,6 @@ export class LoginComponent extends AppComponent {
               private userProv: UsuarioService,
               private auth: AuthService) {
     super(alertService, dialog);
-    this.txtCorreo = 'shaillymolina@gmail.com';
-    this.txtPass = 'molina123';
 
     this.fb = new FormBuilder();
     this.formUsuario = this.fb.group({

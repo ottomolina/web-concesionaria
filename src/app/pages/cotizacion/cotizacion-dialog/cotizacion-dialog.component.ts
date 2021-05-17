@@ -1,8 +1,6 @@
-import {AfterViewInit, Component, Inject, OnInit, ViewChild} from '@angular/core';
+import {Component, EventEmitter, Inject, OnInit} from '@angular/core';
 import {MAT_DIALOG_DATA, MatDialog, MatDialogRef} from '@angular/material/dialog';
-import {FormBuilder} from '@angular/forms';
-import {MatTableDataSource} from '@angular/material/table';
-import {MatPaginator} from '@angular/material/paginator';
+import {AuthService} from '../../../providers/auth/auth.service';
 
 @Component({
   selector: 'app-cotizacion-dialog',
@@ -10,6 +8,7 @@ import {MatPaginator} from '@angular/material/paginator';
   styleUrls: ['./cotizacion-dialog.component.css']
 })
 export class CotizacionDialogComponent implements OnInit {
+  handleGuardar = new EventEmitter();
   public txtBuscarCliente = '';
   public txtBuscarVehiculo = '';
 
@@ -31,7 +30,6 @@ export class CotizacionDialogComponent implements OnInit {
     this.listaClientes = listas.clientes;
     this.listaVehiculos = listas.vehiculos;
     this.title = 'Cotizador';
-
   }
 
   ngOnInit(): void {
@@ -54,13 +52,9 @@ export class CotizacionDialogComponent implements OnInit {
   }
 
   public clickGuardar(): void {
-    // console.log('Formulario', this.formCliente.value);
-    // const obj = this.formCliente.value;
-    // if (this.datos.orm) {
-    //   obj.id = this.datos.orm.id;
-    // }
-    // this.datos.handleGuardar(obj);
-    this.dialogRef.close();
+    const { creado, ...dataCliente } = this.cliente;
+    const sender = { cliente: dataCliente, vehiculo: this.vehiculo };
+    this.handleGuardar.emit(sender);
   }
 
 }

@@ -6,6 +6,7 @@ import {AppComponent} from '../app.component';
 import {NgxMatAlertConfirmService} from 'ngx-mat-alert-confirm';
 import {MatDialog} from '@angular/material/dialog';
 import {ConcesionarioComponent} from './concesionario/concesionario.component';
+import {ConcesionarioService} from '../providers/concesionario/concesionario.service';
 
 @Component({
   selector: 'app-pages',
@@ -28,19 +29,34 @@ export class PagesComponent extends AppComponent implements OnInit {
   constructor(public alertService: NgxMatAlertConfirmService,
               public dialog: MatDialog,
               private authService: AuthService,
-              private router: Router) {
+              private router: Router,
+              private concesionarioService: ConcesionarioService) {
     super(alertService, dialog);
+    const { nombres, apellidos } = this.authService.getUser();
+    this.username = `${nombres} ${apellidos}`;
   }
 
   ngOnInit(): void {
     const usuario = this.authService.getUser();
-    console.log('Usuario', usuario);
     const { concesionarioid } = usuario;
     if (concesionarioid === '') {
-      // this.router.navigate(['/concesionario'])
-      const data = { orm: null };
-      this.openDialog(ConcesionarioComponent, data, null);
+      this.router.navigate(['/concesionario']);
+    } else {
+      this.showLoading();
+      this.concesionarioService.getConcesionarioById(concesionarioid).then(resp => {
+        this.dismissLoading();
+        this.authService.setConcesionario(resp);
+      }).catch(err => {
+        console.log('Error cargaConcesionario', err);
+        this.dismissLoading();
+        this.showMessage(err.mensaje);
+      });
     }
+  }
+
+  public cerrarSesion(): void {
+    this.authService.closeSession();
+    this.router.navigate(['/login']);
   }
 
 }

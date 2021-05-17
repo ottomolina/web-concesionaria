@@ -3,28 +3,28 @@
     {{title}}
   </h1>
   <div mat-dialog-content>
-    <mat-tab-group animationDuration="100ms" [(selectedIndex)]="tabSelected">
-      <mat-tab label="Cliente">
+    <mat-tab-group animationDuration="100ms" [(selectedIndex)]="tabSelected" >
+      <mat-tab label="Cliente" [disabled]="true">
         <ng-template matTabContent>
           <app-custom-input [label]="'Búsqueda cliente'" [(ngModel)]="txtBuscarCliente"></app-custom-input>
           <app-cl-tabla [listaClientes]="listaClientes" (selectCliente)="selectCliente($event)"></app-cl-tabla>
         </ng-template>
       </mat-tab>
-      <mat-tab label="Vehículo">
+      <mat-tab label="Vehículo" [disabled]="true">
         <ng-template matTabContent>
           <app-custom-input [label]="'Búsqueda vehículo'" [(ngModel)]="txtBuscarVehiculo"></app-custom-input>
           <app-car-tabla [listaVehiculos]="listaVehiculos" (selectVehiculo)="selectVehiculo($event)"></app-car-tabla>
         </ng-template>
       </mat-tab>
-      <mat-tab label="Confirmar">
+      <mat-tab label="Confirmar" [disabled]="true">
         <ng-template matTabContent>
           <app-confirma-datos [cliente]="cliente" [vehiculo]="vehiculo"></app-confirma-datos>
         </ng-template>
       </mat-tab>
     </mat-tab-group>
   </div>
-  <div mat-dialog-actions *ngIf="tabSelected === 2">
-    <button mat-raised-button (click)="clickGuardar()">Guardar</button>
+  <div mat-dialog-actions>
+    <button mat-raised-button (click)="clickGuardar()" *ngIf="tabSelected === 2">Guardar</button>
     <button mat-raised-button (click)="closeDialog()">Cancelar</button>
   </div>
 </div>

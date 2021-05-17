@@ -3,55 +3,85 @@ import {AppComponent} from '../../app.component';
 import {NgxMatAlertConfirmService} from 'ngx-mat-alert-confirm';
 import {MatDialog} from '@angular/material/dialog';
 import {ClienteDialogComponent} from './cliente-dialog/cliente-dialog.component';
+import {ClienteService} from '../../providers/cliente/cliente.service';
+import {MatTableDataSource} from '@angular/material/table';
 
 @Component({
   selector: 'app-cliente',
   templateUrl: './cliente.component.html',
   styleUrls: ['./cliente.component.css']
 })
-export class ClienteComponent extends AppComponent {
+export class ClienteComponent extends AppComponent implements OnInit {
   public lstData = [];
+  public dsCliente: MatTableDataSource<any>;
 
   public displayedColumns: string[] = ['id', 'nombres', 'apellidos', 'telefono', 'correo', 'options'];
 
   constructor(public alertService: NgxMatAlertConfirmService,
-              public dialog: MatDialog) {
+              public dialog: MatDialog,
+              private clienteService: ClienteService) {
     super(alertService, dialog);
-
-    this.lstData.push({id: 1, nombres: 'Amparo', apellidos: 'Maldonado', telefono: '47485596', correo: 'adrix.robles@gmail.com',
-      direccion: 'Xela, Quetzaltenango', nacimiento: '1991-03-26', genero: 'Mujer', ocupacion: 'Ingeniera en sistemas',
-      ingresos: 13500.00});
-    this.lstData.push({id: 2, nombres: 'Edgar', apellidos: 'Molina', telefono: '56105238', correo: 'edgar.molina@gmail.com',
-      direccion: 'Palencia, Guatemala', nacimiento: '1966-05-10', genero: 'Hombre', ocupacion: 'Maestro jubilado',
-      ingresos: 7500.00});
+    this.showLoading();
+    this.cargarListaClientes().then(() => this.dismissLoading()
+    ).catch(err => {
+      console.log('Error cargarListaClientes', err);
+      this.dismissLoading();
+      this.showMessage(err.mensaje);
+    });
   }
 
-  public nuevoRegistro(): void {
-    const data = { orm: null, handleGuardar: this.handleGuardar };
-    this.openDialog(ClienteDialogComponent, data, null);
+  ngOnInit(): void {
   }
 
-  private handleGuardar(obj): void {
-    console.log('HandleGuardar', obj);
+  private cargarListaClientes = async () => {
+    const result: any = await this.clienteService.listarClientes();
+    this.lstData = result.lista;
+    this.dsCliente = new MatTableDataSource<any>(this.lstData);
   }
 
   public clickEditar(obj): void {
-    const data = { orm: obj, handleGuardar: this.handleGuardar };
-    this.openDialog(ClienteDialogComponent, data, null);
+    const { nacimiento } = obj;
+    obj.nacimiento = nacimiento.substring(0, 10);
+    this.abrirDialog(obj);
   }
 
-  public clickEliminar(obj): void {
-    console.log('Eliminar', obj);
-    this.mostrarDialogo(
-      '¿Está seguro de eliminar este registro?',
-      'Eliminar cliente',
-      () => this.handleEliminar(obj),
-      undefined
-    );
+  public abrirDialog(obj?: any): void {
+    console.log('obj', obj);
+    const data: any = {orm: obj, handleGuardar: this.handleGuardar};
+    const ref = this.openDialog(ClienteDialogComponent, data, null);
+    ref.componentInstance.handleGuardar.subscribe(result => {
+      this.showLoading();
+      this.handleGuardar(result).then(resp => {
+        this.dismissLoading();
+      }).catch(err => {
+        this.dismissLoading();
+        this.showMessage(err.mensaje);
+      });
+    });
   }
 
-  public handleEliminar(obj): void {
-    console.log('Handle Eliminar', obj);
+  private handleGuardar = async (obj) => {
+    console.log('HandleGuardar', obj);
+    const { id } = obj;
+    const promise: any = id
+                    ? await this.clienteService.actualizarCliente(obj)
+                    : await this.clienteService.crearCliente(obj);
+    await this.cargarListaClientes();
+    return promise;
   }
+
+  // public clickEliminar(obj): void {
+  //   console.log('Eliminar', obj);
+  //   this.mostrarDialogo(
+  //     '¿Está seguro de eliminar este registro?',
+  //     'Eliminar cliente',
+  //     () => this.handleEliminar(obj),
+  //     undefined
+  //   );
+  // }
+  //
+  // public handleEliminar(obj): void {
+  //   console.log('Handle Eliminar', obj);
+  // }
 
 }

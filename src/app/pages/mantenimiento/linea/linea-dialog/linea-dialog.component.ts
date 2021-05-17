@@ -1,4 +1,4 @@
-import {Component, Inject, OnInit} from '@angular/core';
+import {Component, EventEmitter, Inject, OnInit} from '@angular/core';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {MAT_DIALOG_DATA, MatDialog, MatDialogRef} from '@angular/material/dialog';
 import {ItemSelect} from '../../../../models/ItemSelect';
@@ -9,6 +9,7 @@ import {ItemSelect} from '../../../../models/ItemSelect';
   styleUrls: ['./linea-dialog.component.css']
 })
 export class LineaDialogComponent implements OnInit {
+  handleGuardar = new EventEmitter();
   public title: string;
   public formLinea: FormGroup;
   public lista: Array<ItemSelect>;
@@ -18,18 +19,17 @@ export class LineaDialogComponent implements OnInit {
               public dialogRef: MatDialogRef<LineaDialogComponent>,
               @Inject(MAT_DIALOG_DATA) public datos: any) {
     this.fb = new FormBuilder();
-    console.log('datos', datos);
     this.lista = datos.lstMarcas;
     if (!this.datos.orm ) {
       this.title = 'Agregar registro';
       this.formLinea = this.fb.group({
-        marca: ['', [Validators.required]],
+        marcaid: ['', [Validators.required]],
         linea: ['', [Validators.required]]
       });
     } else {
       this.title = 'Modificar registro';
       this.formLinea = this.fb.group({
-        marca: [datos.orm.marca, [Validators.required]],
+        marcaid: [datos.orm.marcaid, [Validators.required]],
         linea: [datos.orm.linea, [Validators.required]]
       });
     }
@@ -47,7 +47,7 @@ export class LineaDialogComponent implements OnInit {
     if (this.datos.orm) {
       obj.id = this.datos.orm.id;
     }
-    this.datos.handleGuardar(obj);
+    this.handleGuardar.emit(obj);
     this.dialogRef.close();
   }
 }

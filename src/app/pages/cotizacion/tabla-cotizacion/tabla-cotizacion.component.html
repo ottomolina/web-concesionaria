@@ -14,7 +14,7 @@
     <td>{{obj.agente.nombres}} {{obj.agente.apellidos}}</td>
     <td>{{obj.vehiculo.tipo}} {{obj.vehiculo.marca}} {{obj.linea}} {{obj.vehiculo.modelo}} {{obj.vehiculo.color}}</td>
     <td>{{obj.vehiculo.precio}}</td>
-    <td>{{obj.creado}}</td>
+    <td>{{obj.creado | date}}</td>
     <td>
       <button mat-icon-button [matMenuTriggerFor]="menu" [matMenuTriggerData]="{object: obj}">
         <mat-icon>more_vert</mat-icon>

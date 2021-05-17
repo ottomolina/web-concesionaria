@@ -1,73 +1,90 @@
-import {AfterViewInit, Component, Inject, OnInit, ViewChild} from '@angular/core';
-import {MAT_DIALOG_DATA, MatDialog, MatDialogRef} from '@angular/material/dialog';
-import {MatTableDataSource} from '@angular/material/table';
-import {MatPaginator} from '@angular/material/paginator';
+import { Component, OnInit, } from '@angular/core';
+import {MatDialog, MatDialogRef} from '@angular/material/dialog';
 import {AppComponent} from '../../app.component';
 import {NgxMatAlertConfirmService} from 'ngx-mat-alert-confirm';
+import {ConcesionarioService} from '../../providers/concesionario/concesionario.service';
+import {ConcesionarioDialogComponent} from './concesionario-dialog/concesionario-dialog.component';
+import {AuthService} from '../../providers/auth/auth.service';
+import {Router} from '@angular/router';
+import {UsuarioService} from '../../providers/usuario/usuario.service';
 
 @Component({
   selector: 'app-concesionario',
   templateUrl: './concesionario.component.html',
   styleUrls: ['./concesionario.component.css']
 })
-export class ConcesionarioComponent extends AppComponent implements OnInit, AfterViewInit {
-  public title = 'Asignación de concesionario';
-
-  private listaConcesionario = [
-    { id: 1, nombre: 'Impocar', direccion: '15 avenida 2-15 zona 15, Blvd Vista Hermosa, Ciudad Guatemala', creado: '2021-03-26' },
-    { id: 2, nombre: 'Ventas directas', direccion: '2 avenida 12-15 zona 12, Ciudad Guatemala', creado: '2021-03-29' },
-    { id: 3, nombre: 'Expoauto', direccion: '7 avenida 3-85 zona 9, Ciudad Guatemala', creado: '2021-04-12' },
-    { id: 2, nombre: 'Ventas directas', direccion: '2 avenida 12-15 zona 12, Ciudad Guatemala', creado: '2021-03-29' },
-    { id: 3, nombre: 'Expoauto', direccion: '7 avenida 3-85 zona 9, Ciudad Guatemala', creado: '2021-04-12' },
-    { id: 2, nombre: 'Ventas directas', direccion: '2 avenida 12-15 zona 12, Ciudad Guatemala', creado: '2021-03-29' },
-    { id: 3, nombre: 'Expoauto', direccion: '7 avenida 3-85 zona 9, Ciudad Guatemala', creado: '2021-04-12' },
-    { id: 2, nombre: 'Ventas directas', direccion: '2 avenida 12-15 zona 12, Ciudad Guatemala', creado: '2021-03-29' },
-    { id: 3, nombre: 'Expoauto', direccion: '7 avenida 3-85 zona 9, Ciudad Guatemala', creado: '2021-04-12' },
-    { id: 2, nombre: 'Ventas directas', direccion: '2 avenida 12-15 zona 12, Ciudad Guatemala', creado: '2021-03-29' },
-    { id: 3, nombre: 'Expoauto', direccion: '7 avenida 3-85 zona 9, Ciudad Guatemala', creado: '2021-04-12' },
-    { id: 2, nombre: 'Ventas directas', direccion: '2 avenida 12-15 zona 12, Ciudad Guatemala', creado: '2021-03-29' },
-    { id: 3, nombre: 'Expoauto', direccion: '7 avenida 3-85 zona 9, Ciudad Guatemala', creado: '2021-04-12' },
-    { id: 2, nombre: 'Ventas directas', direccion: '2 avenida 12-15 zona 12, Ciudad Guatemala', creado: '2021-03-29' },
-    { id: 3, nombre: 'Expoauto', direccion: '7 avenida 3-85 zona 9, Ciudad Guatemala', creado: '2021-04-12' },
-    { id: 2, nombre: 'Ventas directas', direccion: '2 avenida 12-15 zona 12, Ciudad Guatemala', creado: '2021-03-29' },
-    { id: 3, nombre: 'Expoauto', direccion: '7 avenida 3-85 zona 9, Ciudad Guatemala', creado: '2021-04-12' }
-  ];
-
-  public columnsConcesionario = ['id', 'nombre', 'direccion', 'options'];
-  public concesionarioSeleccionado: any = null;
-  public dsConcesionario: MatTableDataSource<any>;
-  @ViewChild(MatPaginator) paginator: MatPaginator;
+export class ConcesionarioComponent extends AppComponent implements OnInit {
 
   constructor(public alertService: NgxMatAlertConfirmService,
               public dialog: MatDialog,
-              public dialogRef: MatDialogRef<ConcesionarioComponent>,
-              @Inject(MAT_DIALOG_DATA) public datos: any) {
+              public concesionarioService: ConcesionarioService,
+              public usuarioService: UsuarioService,
+              private authService: AuthService,
+              private router: Router
+              ) {
     super(alertService, dialog);
+    const { concesionarioid } = this.authService.getUser();
+    if (!concesionarioid) {
+      this.cargaDatos();
+    } else {
+      router.navigate(['/home']);
+    }
   }
 
-  ngAfterViewInit(): void {
-    console.log('ngAfterViewInit()');
+  ngOnInit(): void { }
+
+  public cargaDatos(): void {
+    this.showLoading();
+    this.concesionarioService.listarConcesionarios().then(data => {
+      this.dismissLoading();
+      const ref = this.openDialog(ConcesionarioDialogComponent, data, null);
+
+      ref.componentInstance.onGuardar.subscribe(formulario => {
+        this.guardarConcesionario(formulario, ref);
+      });
+      ref.componentInstance.onSeleccionar.subscribe(concesionario => {
+        ref.close(concesionario);
+      });
+
+      ref.beforeClosed().subscribe((result) => {
+        ref.componentInstance.onGuardar.unsubscribe();
+        ref.componentInstance.onSeleccionar.unsubscribe();
+        this.asignaConcesionario(result);
+      });
+    }).catch(err => {
+      this.dismissLoading();
+      this.showMessage(err.mensaje);
+    });
   }
 
-  ngOnInit(): void {
-    console.log('ngOnInit()');
-    this.dsConcesionario = new MatTableDataSource<any>(this.listaConcesionario);
+  public asignaConcesionario(concesionario: any): void {
+    AuthService.asignaConcesionario(concesionario);
+    this.showLoading();
+    const { uid } = this.authService.getUser();
+    const usuario = { _uid: uid, concesionarioid: concesionario.id };
+    console.log(usuario);
+    this.usuarioService.actualizarUsuario(usuario).then(resp => {
+      this.dismissLoading();
+      console.log(resp);
+      this.router.navigate(['/']);
+    }).catch(err => {
+      console.log('Error asignarConcesionario', err);
+      this.dismissLoading();
+      this.showMessage(err.mensaje);
+    });
   }
 
-  public clickRow(row: any): void {
-    this.concesionarioSeleccionado = this.concesionarioSeleccionado === row ? null : row;
-  }
-
-  closeDialog(result?: any): void {
-    this.dialogRef.close(result);
-  }
-
-  public clickGuardar(): void {
-    this.mostrarDialogo(
-      '¿Estás seguro de la selección realizada?',
-      'Confirma',
-      () => this.dialogRef.close(),
-      () => {});
+  public guardarConcesionario(formulario: any, ref: MatDialogRef<ConcesionarioDialogComponent>): void {
+    this.showLoading();
+    this.concesionarioService.guardarConcesionario(formulario).then(resp => {
+      this.dismissLoading();
+      console.log('result', resp);
+      ref.close( resp );
+    }).catch(err => {
+      console.log('Error guardaConcesionario', err);
+      this.dismissLoading();
+      this.showMessage(err.mensaje);
+    });
   }
 
 }

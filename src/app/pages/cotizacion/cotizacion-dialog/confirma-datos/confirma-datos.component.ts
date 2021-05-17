@@ -11,20 +11,30 @@ import {EUsuario} from '../../../../models/EUsuario';
 export class ConfirmaDatosComponent implements OnInit {
   @Input() cliente: any;
   @Input() vehiculo: any;
+  @Input() usuario: any = null;
+  @Input() concesionario: any = null;
 
   public detalleCliente: Array<EDetalle>;
   public detalleVehiculo: Array<EDetalle>;
   public detalleUsuario: Array<EDetalle>;
-  public usuario: EUsuario;
+  public detalleConcesionario: Array<EDetalle>;
 
   constructor(private authService: AuthService) { }
 
   ngOnInit(): void {
-    this.usuario = this.authService.getUser();
-    console.log('Usuario', this.usuario);
+    if (!this.usuario) {
+      this.usuario = this.authService.getUser();
+    }
     this.detalleUsuario = new Array<EDetalle>();
     this.detalleUsuario.push(new EDetalle('Nombre:', `${this.usuario.nombres} ${this.usuario.apellidos}`));
     this.detalleUsuario.push(new EDetalle('Correo:', this.usuario.correo));
+
+    if (!this.concesionario) {
+      this.concesionario = this.authService.getConcesionario();
+    }
+    this.detalleConcesionario = new Array<EDetalle>();
+    this.detalleConcesionario.push(new EDetalle('Nombre:', this.concesionario.nombre));
+    this.detalleConcesionario.push(new EDetalle('Dirección:', this.concesionario.direccion));
 
     this.detalleCliente = new Array<EDetalle>();
     this.detalleCliente.push(new EDetalle('Nombres:', this.cliente.nombres));

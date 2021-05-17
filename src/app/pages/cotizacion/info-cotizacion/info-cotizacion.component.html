@@ -1,0 +1,11 @@
+<div class="dialog">
+  <h1 mat-dialog-title>
+    {{title}}
+  </h1>
+  <div mat-dialog-content>
+    <app-confirma-datos [cliente]="cliente" [vehiculo]="vehiculo"></app-confirma-datos>
+  </div>
+  <div mat-dialog-actions>
+    <button mat-raised-button (click)="closeDialog()">Aceptar</button>
+  </div>
+</div>

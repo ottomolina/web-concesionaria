@@ -1,9 +1,16 @@
 import { Component, OnInit } from '@angular/core';
-import {MatDialog} from '@angular/material/dialog';
+import {MatDialog, MatDialogRef} from '@angular/material/dialog';
 import {animate, state, style, transition, trigger} from '@angular/animations';
 import {NgxMatAlertConfirmService} from 'ngx-mat-alert-confirm';
 import {AppComponent} from '../../app.component';
 import {CotizacionDialogComponent} from './cotizacion-dialog/cotizacion-dialog.component';
+import {ClienteService} from '../../providers/cliente/cliente.service';
+import {CotizacionService} from '../../providers/cotizacion/cotizacion.service';
+import {VehiculoService} from '../../providers/vehiculo/vehiculo.service';
+import {AuthService} from '../../providers/auth/auth.service';
+import {ConcesionarioDialogComponent} from '../concesionario/concesionario-dialog/concesionario-dialog.component';
+import {InfoCotizacionComponent} from './info-cotizacion/info-cotizacion.component';
+import {PdfService} from '../../providers/util/pdf.service';
 
 @Component({
   selector: 'app-cotizacion',
@@ -18,161 +25,209 @@ import {CotizacionDialogComponent} from './cotizacion-dialog/cotizacion-dialog.c
   ],
 })
 export class CotizacionComponent extends AppComponent {
-  // public lstDataCotizacion: Array<any>;
-
-  public lstCliente = [
-    {id: 1, nombres: 'Amparo', apellidos: 'Maldonado', telefono: '47485596', correo: 'adrix.robles@gmail.com', cotizaciones: []},
-    {id: 2, nombres: 'Edgar', apellidos: 'Molina', telefono: '56105238', correo: 'edgar.molina@gmail.com', cotizaciones: []},
-    {id: 3, nombres: 'David', apellidos: 'Pelaes', telefono: '57320133', correo: 'david.pelaes@gmail.com', cotizaciones: []},
-    {id: 4, nombres: 'Amparo', apellidos: 'Maldonado', telefono: '47485596', correo: 'adrix.robles@gmail.com', cotizaciones: []},
-    {id: 5, nombres: 'Edgar', apellidos: 'Molina', telefono: '56105238', correo: 'edgar.molina@gmail.com', cotizaciones: []},
-    {id: 6, nombres: 'David', apellidos: 'Pelaes', telefono: '57320133', correo: 'david.pelaes@gmail.com', cotizaciones: []},
-    {id: 7, nombres: 'Amparo', apellidos: 'Maldonado', telefono: '47485596', correo: 'adrix.robles@gmail.com', cotizaciones: []},
-    {id: 8, nombres: 'Edgar', apellidos: 'Molina', telefono: '56105238', correo: 'edgar.molina@gmail.com', cotizaciones: []},
-    {id: 9, nombres: 'David', apellidos: 'Pelaes', telefono: '57320133', correo: 'david.pelaes@gmail.com', cotizaciones: []},
-    {id: 10, nombres: 'Amparo', apellidos: 'Maldonado', telefono: '47485596', correo: 'adrix.robles@gmail.com', cotizaciones: []},
-    {id: 11, nombres: 'Edgar', apellidos: 'Molina', telefono: '56105238', correo: 'edgar.molina@gmail.com', cotizaciones: []},
-    {id: 12, nombres: 'David', apellidos: 'Pelaes', telefono: '57320133', correo: 'david.pelaes@gmail.com', cotizaciones: []}
-  ];
-
-  public listaVehiculos = [
-    {id: 1, tipo: 'Sedán', marca: 'Honda', linea: 'Civic', modelo: '2008',
-      color: 'Gris oscuro', cc: '1800', precio: 32000.00 },
-    {id: 2, tipo: 'Sedán', marca: 'Honda', linea: 'Civic', modelo: '1996',
-      color: 'Verde policromado', cc: '1500', precio: 20000.00 },
-    {id: 3, tipo: 'Camioneta', marca: 'Toyota', linea: 'Rav4', modelo: '2003',
-      color: 'Gris claro', cc: '2500', precio: 37000.00 },
-    {id: 4, tipo: 'Hatchback', marca: 'Honda', linea: 'Fit', modelo: '2012',
-      color: 'Azul fuerte', cc: '1500', precio: 38500.00 },
-    {id: 5, tipo: 'Pickup', marca: 'Toyota', linea: '22R', modelo: '1987',
-      color: 'Negro filete blanco', cc: '3000', precio: 45000.00 },
-    {id: 6, tipo: 'Sedán', marca: 'Mitsubishi', linea: 'Lancer', modelo: '2010',
-      color: 'Blanco', cc: '2000', precio: 55000.00 }
-  ];
-
-  public listaTipos = [
-    { id: 1, tipo: 'Camioneta' },
-    { id: 2, tipo: 'Hatchback' },
-    { id: 3, tipo: 'Sedán' },
-    { id: 4, tipo: 'Pickup' }
-  ];
-
-  public listaMarcas = [
-    { id: 1, marca: 'Audi' },
-    { id: 2, marca: 'BMW' },
-    { id: 3, marca: 'Chevrolet' },
-    { id: 4, marca: 'Honda' },
-  ];
-
-  public listaLineas = [
-    { id: 1, marca: 'Audi', linea: 'Q3' },
-    { id: 2, marca: 'Audi', linea: 'Q4' },
-    { id: 3, marca: 'Audi', linea: 'Q5' },
-    { id: 4, marca: 'Honda', linea: 'CRV' },
-    { id: 5, marca: 'Honda', linea: 'Civic' },
-    { id: 6, marca: 'BMW', linea: 'Z4' },
-    { id: 7, marca: 'Chevrolet', linea: 'Spark GT' }
-  ];
+  public lstCliente: any = [];
+  public listaClientes: any;
+  public listaVehiculos: any;
+  public listaTipos: any;
+  public listaMarcas: any;
+  public listaLineas: any;
 
   public displayedColumns: string[] = ['id', 'cliente', 'telefono', 'correo', 'options'];
 
   constructor(public alertService: NgxMatAlertConfirmService,
-              public dialog: MatDialog) {
+              public dialog: MatDialog,
+              private authService: AuthService,
+              private cotizacionService: CotizacionService,
+              private vehiculoService: VehiculoService,
+              private clienteService: ClienteService,
+              private pdfService: PdfService
+  ) {
     super(alertService, dialog);
+    this.showLoading();
+    Promise.all([ this.cargarClientes(), this.cargaDatos()])
+      .then(result => this.dismissLoading() )
+      .catch(err => {
+        this.dismissLoading();
+        this.showMessage(err.mensaje);
+      });
+  }
+
+  cargarClientes = async () => {
+    const data: any = await this.cotizacionService.obtenerClientesConCotizacion();
+    this.lstCliente = data.lista.map(element => {
+      element.cotizaciones = [];
+      return element;
+    });
+    console.log(this.lstCliente);
+  }
+
+  cargaDatos = async () => {
+    const lst: any = await this.vehiculoService.listarVehiculos();
+    this.listaVehiculos = lst.lista;
+    const listado: any = await this.cotizacionService.obtieneDatos();
+    const lstCl: any = await this.clienteService.listarClientes();
+    this.listaClientes = lstCl.lista;
+    this.listaTipos = listado.tipos;
+    this.listaMarcas = listado.marcas;
+    this.listaLineas = listado.lineas;
   }
 
   public expandRow(row: any): void {
-    console.log('seleccionado', row);
     if (row.cotizaciones.length === 0) {
-      row.cotizaciones.push(
-        {
-          vehiculo: {
-            id: 1, tipo: 'Sedán', marca: 'Honda', linea: 'Civic', modelo: '2008',
-            color: 'Gris oscuro', cc: '1800', precio: 32000.00
-          },
-          concesionario: {
-            nombre: 'Impocar',
-            direccion: '15 avenida 2-15 zona 15, Blvd Vista Hermosa, Ciudad Guatemala'
-          },
-          agente: {
-            nombres: 'Dani',
-            apellidos: 'Martínez'
-          },
-          creado: '2021-03-20'
-        }
-      );
-      row.cotizaciones.push(
-        {
-          vehiculo: {
-            id: 4, tipo: 'Hatchback', marca: 'Honda', linea: 'Fit', modelo: '2012',
-            color: 'Azul fuerte', cc: '1500', precio: 38500.00
-          },
-          concesionario: {
-            nombre: 'Impocar',
-            direccion: '15 avenida 2-15 zona 15, Blvd Vista Hermosa, Ciudad Guatemala'
-          },
-          agente: {
-            nombres: 'Dani',
-            apellidos: 'Martínez'
-          },
-          creado: '2021-03-21'
-        }
-      );
+      this.showLoading();
+      this.cotizacionService.listarCotizaciones(row.id).then((resp: any) => {
+        this.dismissLoading();
+        row.cotizaciones = resp.lista.map(element => {
+          element.agente = this.authService.getUser();
+          element.concesionario = this.authService.getConcesionario();
+          return element;
+        });
+      }).catch(err => {
+        console.log(err);
+        this.dismissLoading();
+        this.showMessage(err.mensaje);
+      });
     } else {
       row.cotizaciones = [];
     }
-    console.log('roe', row);
   }
 
   public nuevoRegistro(): void {
     const data = {
-      orm: null,
       listas: {
-        clientes: this.lstCliente,
+        clientes: this.listaClientes,
         vehiculos: this.listaVehiculos,
         tipos: this.listaTipos,
         marcas: this.listaMarcas,
         lineas: this.listaLineas
-      },
-      handleGuardar: this.handleGuardar
+      }
     };
-    this.openDialog(CotizacionDialogComponent, data, null);
+    const ref = this.openDialog(CotizacionDialogComponent, data, null);
+    ref.componentInstance.handleGuardar.subscribe(formulario => {
+      this.guardarCotizacion(formulario, ref);
+    });
+    ref.beforeClosed().subscribe((result) => {
+      ref.componentInstance.handleGuardar.unsubscribe();
+      if ( result ) {
+        this.showLoading();
+        this.cargarClientes().then(() => {
+          this.dismissLoading();
+        }).catch(err => {
+          this.dismissLoading();
+          this.showMessage(err.mensaje);
+        });
+      }
+    });
   }
 
-  private handleGuardar(obj): void {
-    console.log('HandleGuardar', obj);
-  }
-
-  public clickEditar(obj): void {
-    // const data = {
-    //   orm: obj,
-    //   listas: [ this.listaTipos, this.listaMarcas, this.listaLineas ],
-    //   handleGuardar: this.handleGuardar
-    // };
-    // this.openDialog(VehiculoDialogComponent, data, null);
-  }
-
-  public clickEliminar(obj): void {
-    // console.log('Eliminar', obj);
-    // this.mostrarDialogo(
-    //   '¿Está seguro de eliminar este registro?',
-    //   'Eliminar cliente',
-    //   () => this.handleEliminar(obj),
-    //   undefined
-    // );
-  }
-
-  public handleEliminar(obj): void {
-    console.log('Handle Eliminar', obj);
+  private guardarCotizacion(obj: any,  ref: MatDialogRef<CotizacionDialogComponent>): void {
+    obj.uid = this.authService.getUser().uid;
+    obj.concesionarioid = this.authService.getConcesionario().id;
+    this.showLoading();
+    this.cotizacionService.crearCotizacion(obj).then(resp => {
+      this.dismissLoading();
+      console.log(resp);
+      ref.close( true );
+    }).catch(err => {
+      this.dismissLoading();
+      this.showMessage(err.mensaje);
+    });
   }
 
   public infoCotizacion(cotizacion: any, cliente): void {
-    console.log('Cotizacion', cotizacion);
-    console.log('Cliente', cliente);
+    const ref = this.openDialog(InfoCotizacionComponent, null, null);
+    ref.componentInstance.cliente = cliente;
+    ref.componentInstance.vehiculo = cotizacion.vehiculo;
+    ref.componentInstance.usuario = cotizacion.agente;
+    ref.componentInstance.concesionario = cotizacion.concesionario;
   }
 
-  public printCotizacion(cotizacion: any): void {
-    console.log('Cotizacion', cotizacion);
+  public printCotizacion(cotizacion: any, cliente: any): void {
+    const { vehiculo, agente, concesionario } = cotizacion;
+    const contenido = {
+      content: [
+        {text: 'Información de la cotización', style: 'header'},
+        'A continuación podrá visualizar los datos de la cotización.',
+        '\n\n',
+        {text: 'Datos del concesionario', style: 'title'},
+        {
+          style: 'table',
+          table: {
+            body: [
+              ['Nombre', 'Dirección'],
+              [concesionario.nombre, concesionario.direccion]
+            ]
+          }
+        },
+        {text: 'Datos del agente', style: 'title'},
+        {
+          style: 'table',
+          table: {
+            body: [
+              ['Nombre', 'Correo'],
+              [`${agente.nombres} ${agente.apellidos}`, agente.correo]
+            ]
+          }
+        },
+        {text: 'Datos del vehículo cotizado', style: 'title'},
+        {
+          style: 'table',
+          table: {
+            body: [
+              ['Tipo:', vehiculo.tipo],
+              ['Vehículo:', `${vehiculo.marca} ${vehiculo.linea} ${vehiculo.modelo}`],
+              ['Color:', vehiculo.color],
+              ['Cilindraje:', vehiculo.cc],
+              ['Precio:', vehiculo.precio]
+            ]
+          }
+        },
+        {text: 'Datos del cliente', style: 'title'},
+        {
+          style: 'table',
+          table: {
+            body: [
+              ['Nombre:', `${cliente.nombres} ${cliente.apellidos}`],
+              ['Teléfono:', cliente.telefono],
+              ['Correo:', cliente.correo]
+            ]
+          }
+        },
+        '\n\n',
+        `La información aquí contenida es confidencial y debe ser tratada con propósitos informativos, la impresión de esta cotización no implica ningún compromiso entre ambas partes.`
+      ],
+      styles: {
+        header: {
+          fontSize: 18,
+          bold: true,
+          margin: [0, 0, 0, 10]
+        },
+        title: {
+          fontSize: 14,
+          bold: true,
+          margin: [0, 10, 0, 5]
+        },
+        table: {
+          margin: [0, 5, 0, 15]
+        },
+        tableHeader: {
+          bold: true,
+          fontSize: 13,
+          color: 'black'
+        }
+      },
+      defaultStyle: {
+        // alignment: 'justify'
+      }
+    };
+
+    this.showLoading();
+    this.pdfService.generatePdf(contenido).then(() => {
+      this.dismissLoading();
+    }).catch(err => {
+      this.dismissLoading();
+      this.showMessage(err.mensaje);
+    });
   }
 
 }

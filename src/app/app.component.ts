@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 
 import { NgxMatAlertConfirmService } from 'ngx-mat-alert-confirm';
 import {NotificationConfig} from './providers/util/NotificationConfig';
-import {MatDialog, MatDialogConfig} from '@angular/material/dialog';
+import {MatDialog, MatDialogConfig, MatDialogRef} from '@angular/material/dialog';
 import {ComponentType} from '@angular/cdk/overlay';
 import {DialogConfirmComponent} from './providers/util/dialog-confirm';
 
@@ -57,7 +57,7 @@ export class AppComponent implements OnInit {
     return dialogConf;
   }
 
-  public openDialog(component: ComponentType<any>, data: any, callback): void {
+  public openDialog(component: ComponentType<any>, data: any, callback): MatDialogRef<any> {
     const wdw = this.dialog.open(
       component,
       this.getDialogConfig( data )
@@ -70,10 +70,12 @@ export class AppComponent implements OnInit {
         }
       }
     });
+    return wdw;
   }
 
   mostrarDialogo(mensaje: string, titulo: string, callbackYes, callbackNo): void {
     this.dialog.open(DialogConfirmComponent, {
+        width: '400px',
         data: {
           mensaje,
           titulo: titulo ? titulo : `Confirmación`

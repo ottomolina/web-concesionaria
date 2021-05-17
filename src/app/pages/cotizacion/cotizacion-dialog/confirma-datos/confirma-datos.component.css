@@ -7,3 +7,9 @@
 .column {
   width: 50%;
 }
+
+.card {
+  position: relative;
+  height: 420px;
+  overflow: auto;
+}

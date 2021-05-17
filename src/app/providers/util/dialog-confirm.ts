@@ -9,8 +9,8 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
       <p>{{data.mensaje}}</p>
     </div>
     <div mat-dialog-actions>
-      <button mat-button (click)="closeDialog()">No</button>
       <button mat-button (click)="confirm()" cdkFocusInitial>Sí</button>
+      <button mat-button (click)="closeDialog()">No</button>
     </div>
   `
 })

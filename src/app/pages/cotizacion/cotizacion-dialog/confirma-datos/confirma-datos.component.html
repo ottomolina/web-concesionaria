@@ -1,19 +1,22 @@
-<div class="row">
-  <div class="column">
-    <h4>Usuario</h4>
-    <app-tabla-detalle [listaDetalle]="detalleUsuario"></app-tabla-detalle>
+<div class="card">
+  <div class="row">
+    <div class="column">
+      <h4>Usuario</h4>
+      <app-tabla-detalle [listaDetalle]="detalleUsuario"></app-tabla-detalle>
+    </div>
+    <div class="column">
+      <h4>Concesionario</h4>
+      <app-tabla-detalle [listaDetalle]="detalleConcesionario"></app-tabla-detalle>
+    </div>
   </div>
-  <div class="column">
-
-  </div>
-</div>
-<div class="row">
-  <div class="column">
-    <h4>Datos del cliente</h4>
-    <app-tabla-detalle [listaDetalle]="detalleCliente"></app-tabla-detalle>
-  </div>
-  <div class="column">
-    <h4>Datos del vehículo</h4>
-    <app-tabla-detalle [listaDetalle]="detalleVehiculo"></app-tabla-detalle>
+  <div class="row">
+    <div class="column">
+      <h4>Datos del cliente</h4>
+      <app-tabla-detalle [listaDetalle]="detalleCliente"></app-tabla-detalle>
+    </div>
+    <div class="column">
+      <h4>Datos del vehículo</h4>
+      <app-tabla-detalle [listaDetalle]="detalleVehiculo"></app-tabla-detalle>
+    </div>
   </div>
 </div>

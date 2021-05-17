@@ -1,4 +1,4 @@
-import { Component, Inject, OnInit } from '@angular/core';
+import {Component, EventEmitter, Inject, OnInit} from '@angular/core';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
 
@@ -8,6 +8,7 @@ import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dial
   styleUrls: ['./tipo-dialog.component.css']
 })
 export class TipoDialogComponent implements OnInit {
+  handleGuardar = new EventEmitter();
   public title: string;
   public formTipo: FormGroup;
   private fb: FormBuilder;
@@ -16,7 +17,6 @@ export class TipoDialogComponent implements OnInit {
               public dialogRef: MatDialogRef<TipoDialogComponent>,
               @Inject(MAT_DIALOG_DATA) public datos: any) {
     this.fb = new FormBuilder();
-    console.log('datos', datos);
     if (!this.datos.orm ) {
       this.title = 'Agregar registro';
       this.formTipo = this.fb.group({
@@ -38,12 +38,11 @@ export class TipoDialogComponent implements OnInit {
   }
 
   public clickGuardar(): void {
-    console.log('Formulario', this.formTipo.value);
     const obj = this.formTipo.value;
     if (this.datos.orm) {
       obj.id = this.datos.orm.id;
     }
-    this.datos.handleGuardar(obj);
+    this.handleGuardar.emit(obj);
     this.dialogRef.close();
   }
 

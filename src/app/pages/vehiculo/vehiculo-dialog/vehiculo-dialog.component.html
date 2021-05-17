@@ -16,7 +16,7 @@
 
   </div>
   <div mat-dialog-actions>
-    <button mat-raised-button (click)="clickGuardar()">Guardar</button>
+    <button mat-raised-button (click)="clickGuardar()" [disabled]="!formVehiculo.valid">Guardar</button>
     <button mat-raised-button (click)="closeDialog()">Cancelar</button>
   </div>
 </div>

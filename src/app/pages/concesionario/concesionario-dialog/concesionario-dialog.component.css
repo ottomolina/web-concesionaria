@@ -1,0 +1,39 @@
+
+.dialog {
+  width: 650px;
+  /*margin: 0;*/
+  /*position: absolute;*/
+  /*top: 10%;*/
+  /*left: 50%;*/
+  /*-ms-transform: translateY(-10%) translateX(-50%);*/
+  /*transform: translateY(-10%) translateX(-50%);*/
+}
+table {
+  width: 100%;
+}
+
+tr.element-row:hover {
+  background: whitesmoke;
+}
+
+tr.element-row:active {
+  background: #efefef;
+}
+
+tr.expanded-row {
+  background: whitesmoke;
+}
+
+tr.row-selected {
+  background: whitesmoke;
+}
+
+.card {
+  position: relative;
+  height: 296px;
+  overflow: auto;
+}
+
+.td-nombre {
+  padding-right: 5px;
+}

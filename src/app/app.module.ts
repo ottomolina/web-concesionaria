@@ -13,6 +13,7 @@ import { AuthService } from './providers/auth/auth.service';
 import { MatDialogModule} from '@angular/material/dialog';
 import {DialogConfirmComponent} from './providers/util/dialog-confirm';
 import {MatButtonModule} from '@angular/material/button';
+import {MAT_TOOLTIP_SCROLL_STRATEGY_FACTORY_PROVIDER} from '@angular/material/tooltip';
 
 @NgModule({
   declarations: [
@@ -34,7 +35,8 @@ import {MatButtonModule} from '@angular/material/button';
   providers: [
     AuthService,
     HttpService,
-    NgxMatAlertConfirmService
+    NgxMatAlertConfirmService,
+    MAT_TOOLTIP_SCROLL_STRATEGY_FACTORY_PROVIDER
   ]
 })
 export class AppModule { }

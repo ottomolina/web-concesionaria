@@ -3,6 +3,9 @@ import {AppComponent} from '../../app.component';
 import {NgxMatAlertConfirmService} from 'ngx-mat-alert-confirm';
 import {MatDialog} from '@angular/material/dialog';
 import {VehiculoDialogComponent} from './vehiculo-dialog/vehiculo-dialog.component';
+import {VehiculoService} from '../../providers/vehiculo/vehiculo.service';
+import {TipoService, LineaService, MarcaService} from '../../providers/mantenimiento/';
+import {ItemSelect} from '../../models/ItemSelect';
 
 @Component({
   selector: 'app-vehiculo',
@@ -11,76 +14,80 @@ import {VehiculoDialogComponent} from './vehiculo-dialog/vehiculo-dialog.compone
 })
 export class VehiculoComponent extends AppComponent {
   public lstData = [];
-  public listaTipos = [
-    { id: 1, tipo: 'Camioneta' },
-    { id: 2, tipo: 'Hatchback' },
-    { id: 3, tipo: 'Sedán' },
-    { id: 4, tipo: 'Pickup' }
-  ];
-
-  public listaMarcas = [
-    { id: 1, marca: 'Audi' },
-    { id: 2, marca: 'BMW' },
-    { id: 3, marca: 'Chevrolet' },
-    { id: 4, marca: 'Honda' },
-  ];
-
-  public listaLineas = [
-    { id: 1, marca: 'Audi', linea: 'Q3' },
-    { id: 2, marca: 'Audi', linea: 'Q4' },
-    { id: 3, marca: 'Audi', linea: 'Q5' },
-    { id: 4, marca: 'Honda', linea: 'CRV' },
-    { id: 5, marca: 'Honda', linea: 'Civic' },
-    { id: 6, marca: 'BMW', linea: 'Z4' },
-    { id: 7, marca: 'Chevrolet', linea: 'Spark GT' }
-  ];
+  public listaTipos: any;
+  public listaMarcas: any;
+  public listaLineas: any;
 
   public displayedColumns: string[] = ['id', 'tipo', 'marca', 'linea', 'modelo', 'color', 'cc', 'precio', 'options'];
 
   constructor(public alertService: NgxMatAlertConfirmService,
-              public dialog: MatDialog) {
+              public dialog: MatDialog,
+              private vehiculoService: VehiculoService,
+              private lineaService: LineaService,
+              private marcaService: MarcaService,
+              private tipoService: TipoService) {
     super(alertService, dialog);
-
-    this.lstData.push({id: 1, tipo: 'Sedán', marca: 'Honda', linea: 'Civic', modelo: '2008',
-      color: 'Gris oscuro', cc: '1800', precio: 32000.00});
-    this.lstData.push({id: 2, tipo: 'Sedán', marca: 'Honda', linea: 'Civic', modelo: '1996',
-      color: 'Verde policromado', cc: '1500', precio: 20000.00 });
+    this.showLoading();
+    this.cargarListaVehiculos().then(() => {
+      this.listarTiposMarcasLineas().then(() => this.dismissLoading() );
+    }).catch(err => {
+      console.log('Error cargarListaVehiculos', err);
+      this.dismissLoading();
+      this.showMessage(err.mensaje);
+    });
   }
 
-  public nuevoRegistro(): void {
-    const data = {
-      orm: null,
-      listas: [ this.listaTipos, this.listaMarcas, this.listaLineas ],
-      handleGuardar: this.handleGuardar
-    };
-    this.openDialog(VehiculoDialogComponent, data, null);
+  private listarTiposMarcasLineas = async () => {
+    this.listaTipos = await this.tipoService.listarTipos();
+    this.listaMarcas = await this.marcaService.listarMarcas();
+    this.listaLineas = await this.lineaService.listarLineas();
   }
 
-  private handleGuardar(obj): void {
-    console.log('HandleGuardar', obj);
+  private cargarListaVehiculos = async () => {
+    const result: any = await this.vehiculoService.listarVehiculos();
+    this.lstData = result.lista;
   }
 
-  public clickEditar(obj): void {
-    const data = {
+  public abrirDialog(obj?: any): void {
+    console.log('obj', obj);
+    const data: any = {
       orm: obj,
-      listas: [ this.listaTipos, this.listaMarcas, this.listaLineas ],
-      handleGuardar: this.handleGuardar
+      listas: [ this.listaTipos, this.listaMarcas, this.listaLineas ]
     };
-    this.openDialog(VehiculoDialogComponent, data, null);
+    const ref = this.openDialog(VehiculoDialogComponent, data, null);
+    ref.componentInstance.handleGuardar.subscribe(result => {
+      this.showLoading();
+      this.handleGuardar(result).then(resp => {
+        this.dismissLoading();
+      }).catch(err => {
+        this.dismissLoading();
+        this.showMessage(err.mensaje);
+      });
+    });
   }
 
-  public clickEliminar(obj): void {
-    console.log('Eliminar', obj);
-    this.mostrarDialogo(
-      '¿Está seguro de eliminar este registro?',
-      'Eliminar cliente',
-      () => this.handleEliminar(obj),
-      undefined
-    );
+  private handleGuardar = async (obj) => {
+    console.log('HandleGuardar', obj);
+    const { id } = obj;
+    const promise = id
+              ? await this.vehiculoService.actualizarVehiculo(obj)
+              : await this.vehiculoService.crearVehiculo(obj);
+    await this.cargarListaVehiculos();
+    return promise;
   }
 
-  public handleEliminar(obj): void {
-    console.log('Handle Eliminar', obj);
-  }
+  // public clickEliminar(obj): void {
+  //   console.log('Eliminar', obj);
+  //   this.mostrarDialogo(
+  //     '¿Está seguro de eliminar este registro?',
+  //     'Eliminar cliente',
+  //     () => this.handleEliminar(obj),
+  //     undefined
+  //   );
+  // }
+  //
+  // public handleEliminar(obj): void {
+  //   console.log('Handle Eliminar', obj);
+  // }
 
 }

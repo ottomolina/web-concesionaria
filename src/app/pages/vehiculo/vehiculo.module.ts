@@ -13,6 +13,9 @@ import {MatDialogModule} from '@angular/material/dialog';
 import {CustomInputModule} from '../../components/custom-input/custom-input.module';
 import {ReactiveFormsModule} from '@angular/forms';
 import {CustomSelectModule} from '../../components/custom-select/custom-select.module';
+import {VehiculoService} from '../../providers/vehiculo/vehiculo.service';
+import {TipoService, LineaService, MarcaService} from '../../providers/mantenimiento/';
+import {MatTooltipModule} from '@angular/material/tooltip';
 
 
 @NgModule({
@@ -28,7 +31,14 @@ import {CustomSelectModule} from '../../components/custom-select/custom-select.m
     MatDialogModule,
     CustomInputModule,
     ReactiveFormsModule,
-    CustomSelectModule
+    CustomSelectModule,
+    MatTooltipModule
+  ],
+  providers: [
+    VehiculoService,
+    TipoService,
+    LineaService,
+    MarcaService
   ]
 })
 export class VehiculoModule { }

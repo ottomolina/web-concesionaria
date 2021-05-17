@@ -1,0 +1,60 @@
+<div class="dialog">
+  <h1 mat-dialog-title>
+    {{title}}
+  </h1>
+  <div mat-dialog-content *ngIf="page === '1'">
+    <app-mensaje-informativo [mensaje]="'Selecciona el concesionario con el cual trabajarás y recuerda ser responsable con el uso de este sistema.'"></app-mensaje-informativo>
+    <app-custom-input [label]="'Búsqueda concesionario'" [(ngModel)]="txtBuscarConcesionario"></app-custom-input>
+    <div class="card">
+      <table mat-table [dataSource]="dsConcesionario" class="" multiTemplateDataRows>
+        <ng-container matColumnDef="id">
+          <th mat-header-cell *matHeaderCellDef style="width: 10%"> No. </th>
+          <td mat-cell *matCellDef="let concesionario; let i = dataIndex;" style="width: 10%"> {{(i+1)}} </td>
+        </ng-container>
+
+        <ng-container matColumnDef="nombre">
+          <th mat-header-cell *matHeaderCellDef style=""> Nombre </th>
+          <td mat-cell class="td-nombre" *matCellDef="let concesionario" style=""> {{concesionario.nombre}} </td>
+        </ng-container>
+
+        <ng-container matColumnDef="direccion">
+          <th mat-header-cell *matHeaderCellDef style=""> Dirección </th>
+          <td mat-cell *matCellDef="let concesionario" style=""> {{concesionario.direccion}} </td>
+        </ng-container>
+
+        <ng-container matColumnDef="options">
+          <th mat-header-cell *matHeaderCellDef style="width: 8%">  </th>
+          <td mat-cell *matCellDef="let concesionario" style="width: 8%">
+            <mat-icon *ngIf="concesionarioSeleccionado === concesionario" [ngStyle]="{'color': 'green'}">check_circle</mat-icon>
+          </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="columnsConcesionario; sticky: true"></tr>
+        <tr mat-row *matRowDef="let row; columns: columnsConcesionario;"
+            class="element-row"
+            [class.row-selected]="concesionarioSeleccionado === row"
+            (click)="clickRow(row)">
+        </tr>
+      </table>
+    </div>
+    <mat-paginator [pageSize]="5" [length]="totalRegistros" showFirstLastButtons>
+    </mat-paginator>
+
+  </div>
+
+  <div mat-dialog-content *ngIf="page === '2'">
+    <app-mensaje-informativo [mensaje]="'Completa los datos del concesionario con el cual trabajarás y recuerda ser responsable con el uso de este sistema.'"></app-mensaje-informativo>
+    <form [formGroup]="formConcesionario">
+      <app-custom-input [label]="'Nombre:*'" [formControlName]="'nombre'"></app-custom-input>
+      <app-custom-input [label]="'Dirección:*'" [formControlName]="'direccion'" [rows]="'3'"></app-custom-input>
+    </form>
+  </div>
+  <div mat-dialog-actions *ngIf="page === '1'">
+    <button mat-raised-button (click)="clickSeleccionar()" disabled="{{concesionarioSeleccionado === null}}">Seleccionar</button>
+    <button mat-raised-button (click)="nuevoRegistro()">Nuevo registro</button>
+  </div>
+  <div mat-dialog-actions *ngIf="page === '2'">
+    <button mat-raised-button (click)="clickGuardar()" disabled="{{!formConcesionario.valid}}">Guardar</button>
+  </div>
+</div>
+<app-loading [isLoading]="isLoading"></app-loading>
