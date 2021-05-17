@@ -49,9 +49,6 @@ export class VehiculoDialogComponent implements OnInit {
     this.lstLinea = this.datos.listas[2]
       .filter(element => element.marca === event)
       .map((element) => new ItemSelect(element.linea, element.linea) );
-    if (this.lstLinea.length === 0) {
-      console.log('No hay linea asociada.');
-    }
   }
 
   closeDialog(result?: any): void {

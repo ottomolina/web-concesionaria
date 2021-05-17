@@ -3,17 +3,17 @@
 <mat-tab-group animationDuration="0ms" [(selectedIndex)]="selectedTabIndex">
   <mat-tab label="Tipos">
     <ng-template matTabContent>
-      <app-tipos [lstData]="listaTipos" (editar)="abrirDialog($event)" (eliminar)="clickEliminar($event)"></app-tipos>
+      <app-tipos [lstData]="listaTipos" (editar)="abrirDialog($event)" ></app-tipos>
     </ng-template>
   </mat-tab>
   <mat-tab label="Marcas">
     <ng-template matTabContent>
-      <app-marcas [lstData]="listaMarcas" (editar)="abrirDialog($event)" (eliminar)="clickEliminar($event)"></app-marcas>
+      <app-marcas [lstData]="listaMarcas" (editar)="abrirDialog($event)" ></app-marcas>
     </ng-template>
   </mat-tab>
   <mat-tab label="Línea">
     <ng-template matTabContent>
-      <app-linea [lstData]="listaLineas" (editar)="abrirDialog($event)" (eliminar)="clickEliminar($event)"></app-linea>
+      <app-linea [lstData]="listaLineas" (editar)="abrirDialog($event)" ></app-linea>
     </ng-template>
   </mat-tab>
 </mat-tab-group>

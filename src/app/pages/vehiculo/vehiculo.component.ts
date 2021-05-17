@@ -31,7 +31,6 @@ export class VehiculoComponent extends AppComponent {
     this.cargarListaVehiculos().then(() => {
       this.listarTiposMarcasLineas().then(() => this.dismissLoading() );
     }).catch(err => {
-      console.log('Error cargarListaVehiculos', err);
       this.dismissLoading();
       this.showMessage(err.mensaje);
     });
@@ -49,7 +48,6 @@ export class VehiculoComponent extends AppComponent {
   }
 
   public abrirDialog(obj?: any): void {
-    console.log('obj', obj);
     const data: any = {
       orm: obj,
       listas: [ this.listaTipos, this.listaMarcas, this.listaLineas ]
@@ -67,27 +65,12 @@ export class VehiculoComponent extends AppComponent {
   }
 
   private handleGuardar = async (obj) => {
-    console.log('HandleGuardar', obj);
-    const { id } = obj;
+    const {id} = obj;
     const promise = id
-              ? await this.vehiculoService.actualizarVehiculo(obj)
-              : await this.vehiculoService.crearVehiculo(obj);
+      ? await this.vehiculoService.actualizarVehiculo(obj)
+      : await this.vehiculoService.crearVehiculo(obj);
     await this.cargarListaVehiculos();
     return promise;
   }
-
-  // public clickEliminar(obj): void {
-  //   console.log('Eliminar', obj);
-  //   this.mostrarDialogo(
-  //     '¿Está seguro de eliminar este registro?',
-  //     'Eliminar cliente',
-  //     () => this.handleEliminar(obj),
-  //     undefined
-  //   );
-  // }
-  //
-  // public handleEliminar(obj): void {
-  //   console.log('Handle Eliminar', obj);
-  // }
 
 }

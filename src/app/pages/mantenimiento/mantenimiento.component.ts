@@ -72,20 +72,6 @@ export class MantenimientoComponent extends AppComponent {
     });
   }
 
-  public clickEliminar(obj): void {
-    console.log('Eliminar', obj);
-    this.mostrarDialogo(
-      '¿Está seguro de eliminar este registro?',
-      'Eliminar registro',
-      () => this.handleEliminar(obj),
-      undefined
-    );
-  }
-
-  public handleEliminar(obj): void {
-    console.log('Handle Eliminar', obj);
-  }
-
   public async handleGuardar(obj): Promise<any> {
     let promise: any;
     const { id } = obj;

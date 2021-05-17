@@ -42,7 +42,6 @@ export class LoginComponent extends AppComponent {
     this.showLoading();
     this.userProv.login(request).then((resp: any) => {
       this.dismissLoading();
-      console.log('Response login', resp);
       this.auth.setSession(resp.usuario, resp.token);
       setTimeout(() => {
         this.router.navigate(['/']).then(() => { });

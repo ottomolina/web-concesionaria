@@ -62,13 +62,10 @@ export class ConcesionarioComponent extends AppComponent implements OnInit {
     this.showLoading();
     const { uid } = this.authService.getUser();
     const usuario = { _uid: uid, concesionarioid: concesionario.id };
-    console.log(usuario);
     this.usuarioService.actualizarUsuario(usuario).then(resp => {
       this.dismissLoading();
-      console.log(resp);
       this.router.navigate(['/']);
     }).catch(err => {
-      console.log('Error asignarConcesionario', err);
       this.dismissLoading();
       this.showMessage(err.mensaje);
     });
@@ -78,10 +75,8 @@ export class ConcesionarioComponent extends AppComponent implements OnInit {
     this.showLoading();
     this.concesionarioService.guardarConcesionario(formulario).then(resp => {
       this.dismissLoading();
-      console.log('result', resp);
       ref.close( resp );
     }).catch(err => {
-      console.log('Error guardaConcesionario', err);
       this.dismissLoading();
       this.showMessage(err.mensaje);
     });

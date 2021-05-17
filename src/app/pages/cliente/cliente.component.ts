@@ -24,7 +24,6 @@ export class ClienteComponent extends AppComponent implements OnInit {
     this.showLoading();
     this.cargarListaClientes().then(() => this.dismissLoading()
     ).catch(err => {
-      console.log('Error cargarListaClientes', err);
       this.dismissLoading();
       this.showMessage(err.mensaje);
     });
@@ -46,7 +45,6 @@ export class ClienteComponent extends AppComponent implements OnInit {
   }
 
   public abrirDialog(obj?: any): void {
-    console.log('obj', obj);
     const data: any = {orm: obj, handleGuardar: this.handleGuardar};
     const ref = this.openDialog(ClienteDialogComponent, data, null);
     ref.componentInstance.handleGuardar.subscribe(result => {
@@ -61,7 +59,6 @@ export class ClienteComponent extends AppComponent implements OnInit {
   }
 
   private handleGuardar = async (obj) => {
-    console.log('HandleGuardar', obj);
     const { id } = obj;
     const promise: any = id
                     ? await this.clienteService.actualizarCliente(obj)
@@ -69,19 +66,5 @@ export class ClienteComponent extends AppComponent implements OnInit {
     await this.cargarListaClientes();
     return promise;
   }
-
-  // public clickEliminar(obj): void {
-  //   console.log('Eliminar', obj);
-  //   this.mostrarDialogo(
-  //     '¿Está seguro de eliminar este registro?',
-  //     'Eliminar cliente',
-  //     () => this.handleEliminar(obj),
-  //     undefined
-  //   );
-  // }
-  //
-  // public handleEliminar(obj): void {
-  //   console.log('Handle Eliminar', obj);
-  // }
 
 }

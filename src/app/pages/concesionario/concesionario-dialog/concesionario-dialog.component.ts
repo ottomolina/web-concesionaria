@@ -34,7 +34,6 @@ export class ConcesionarioDialogComponent extends AppComponent implements OnInit
                @Inject(MAT_DIALOG_DATA) public datos: any) {
     super(alertService, dialog);
     this.fb = new FormBuilder();
-    console.log(datos);
     this.formConcesionario = this.fb.group({
       nombre: ['', [Validators.required]],
       direccion: ['', [Validators.required]] ,

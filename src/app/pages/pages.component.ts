@@ -47,7 +47,6 @@ export class PagesComponent extends AppComponent implements OnInit {
         this.dismissLoading();
         this.authService.setConcesionario(resp);
       }).catch(err => {
-        console.log('Error cargaConcesionario', err);
         this.dismissLoading();
         this.showMessage(err.mensaje);
       });

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import {MatDialog, MatDialogRef} from '@angular/material/dialog';
 import {animate, state, style, transition, trigger} from '@angular/animations';
 import {NgxMatAlertConfirmService} from 'ngx-mat-alert-confirm';
@@ -8,7 +8,6 @@ import {ClienteService} from '../../providers/cliente/cliente.service';
 import {CotizacionService} from '../../providers/cotizacion/cotizacion.service';
 import {VehiculoService} from '../../providers/vehiculo/vehiculo.service';
 import {AuthService} from '../../providers/auth/auth.service';
-import {ConcesionarioDialogComponent} from '../concesionario/concesionario-dialog/concesionario-dialog.component';
 import {InfoCotizacionComponent} from './info-cotizacion/info-cotizacion.component';
 import {PdfService} from '../../providers/util/pdf.service';
 
@@ -58,7 +57,6 @@ export class CotizacionComponent extends AppComponent {
       element.cotizaciones = [];
       return element;
     });
-    console.log(this.lstCliente);
   }
 
   cargaDatos = async () => {
@@ -126,7 +124,6 @@ export class CotizacionComponent extends AppComponent {
     this.showLoading();
     this.cotizacionService.crearCotizacion(obj).then(resp => {
       this.dismissLoading();
-      console.log(resp);
       ref.close( true );
     }).catch(err => {
       this.dismissLoading();
