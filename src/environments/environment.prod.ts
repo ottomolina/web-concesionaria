@@ -1,3 +1,4 @@
 export const environment = {
-  production: true
+  production: true,
+  ws: 'https://api-concesionario.herokuapp.com/rest/api'
 };
